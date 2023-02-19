@@ -23,5 +23,3 @@ const attatchCookiesToRes = ({ user, res }) => {
 };
 
 module.exports = { createJWT, isTokenValid, attatchCookiesToRes };
-
-

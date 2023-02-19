@@ -9,12 +9,21 @@ const {
   showCurrentUser,
 } = require('../controller/UsersContoller');
 
-const { userAuth } = require('../middleware/authentication');
+const {
+  userAuth,
+  authorizePermission,
+} = require('../middleware/authentication');
 
-router.route('/').get(userAuth, getAllUsers);
-router.route('/showMe').get(showCurrentUser);
-router.route('/updateUser').post(updateUser);
-router.route('/updateUserPassword').post(updateUserPassword);
-router.route('/:id').get(getSingleUser);
+router
+  .route('/')
+  .get(userAuth, authorizePermission('user', 'admin'), getAllUsers);
+
+router.route('/showMe').get(userAuth, showCurrentUser);
+
+router.route('/updateUser').patch(userAuth, updateUser);
+
+router.route('/updateUserPassword').patch(userAuth, updateUserPassword);
+
+router.route('/:id').get(userAuth, getSingleUser);
 
 module.exports = router;

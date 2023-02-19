@@ -1,12 +1,14 @@
 const User = require('../models/UserModel');
+const { attatchCookiesToRes } = require('../utils');
 const { BadRequestError, NotFoundError } = require('../errors');
-const { createJWT, attatchCookiesToRes } = require('../utils');
-const { date } = require('joi');
 const { StatusCodes } = require('http-status-codes');
+const { createTokenUser } = require('../utils/createTokenUser');
 
+// register
 const register = async (req, res) => {
   const { email, name, password } = req.body;
   const emailIsAlreadyExist = await User.findOne({ email });
+
   if (emailIsAlreadyExist) throw new BadRequestError('email is already exist');
 
   const isFirstUser = (await User.countDocuments({})) === 0;
@@ -14,7 +16,8 @@ const register = async (req, res) => {
 
   const user = await User.create({ email, password, name, role });
 
-  const userToken = { name: user.name, id: user._id, role: user.role };
+  const userToken = createTokenUser(user);
+
   attatchCookiesToRes({ res, user: userToken });
 
   res.status(201).json({ user: userToken });
@@ -24,7 +27,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || password)
+  if (!email || !password)
     throw new BadRequestError('please provide email and password');
 
   const user = await User.findOne({ email });
@@ -35,7 +38,7 @@ const login = async (req, res) => {
 
   if (!isPasswordValid) throw new NotFoundError('password is not valid');
 
-  const userToken = { name: user.name, id: user._id, role: user.role };
+  const userToken = createTokenUser(user);
   attatchCookiesToRes({ user: userToken, res });
 
   res.status(StatusCodes.OK).json({ user: userToken });

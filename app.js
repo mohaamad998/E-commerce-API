@@ -8,21 +8,28 @@ const port = process.env.PORT || 5000;
 //  rest pakages
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
 
 // middleware
 app.use(morgan('tiny'));
 app.use(express.json());
 app.use(cookieParser());
+app.use(fileUpload());
+app.use(express.static('./public'));
 
 // db
 const connectDB = require('./db/connect');
 
 // routes
 const authRouter = require('./routes/AuthRouter');
-const usersRouter = require('./routes/UsersRoutes')
+const usersRouter = require('./routes/UsersRoutes');
+const productsRouter = require('./routes/ProductRoutes');
+const reviewRouter = require('./routes/ReviewRoutes');
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/products', productsRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 app.use('/api/v1/', (req, res) => {
   console.log(req.cookies.token);
