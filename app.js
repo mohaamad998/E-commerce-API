@@ -25,11 +25,15 @@ const authRouter = require('./routes/AuthRouter');
 const usersRouter = require('./routes/UsersRoutes');
 const productsRouter = require('./routes/ProductRoutes');
 const reviewRouter = require('./routes/ReviewRoutes');
+const orderRouter = require('./routes/OrderRoutes');
+const cartRouter = require('./routes/cartRoutes');
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/products', productsRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/orders', orderRouter);
+app.use('/api/v1/carts', cartRouter);
 
 app.use('/api/v1/', (req, res) => {
   console.log(req.cookies.token);
@@ -39,6 +43,7 @@ app.use('/api/v1/', (req, res) => {
 // error middleware
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+const { addItemToCart } = require('./controller/CartController');
 
 app.use(errorHandlerMiddleware);
 app.use(notFoundMiddleware);
@@ -54,5 +59,7 @@ const start = async () => {
     console.log(error);
   }
 };
+
+const findTotal = (array) => {};
 
 start();

@@ -1,4 +1,5 @@
 const User = require('../models/UserModel');
+const Cart = require('../models/Cart');
 const { attatchCookiesToRes } = require('../utils');
 const { BadRequestError, NotFoundError } = require('../errors');
 const { StatusCodes } = require('http-status-codes');
@@ -16,11 +17,14 @@ const register = async (req, res) => {
 
   const user = await User.create({ email, password, name, role });
 
+  const cart = await Cart.create({ user: user._id });
+  console.log(cart);
+
   const userToken = createTokenUser(user);
 
   attatchCookiesToRes({ res, user: userToken });
 
-  res.status(201).json({ user: userToken });
+  res.status(201).json({ user: userToken, cart });
 };
 
 // login
